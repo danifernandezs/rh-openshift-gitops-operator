@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: day2-operations
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  project: base-seed
+  source:
+    repoURL: https://github.com/danifernandezs/rh-openshift-gitops-demo.git
+    targetRevision: main
+    path: argo-applications/day2-operations/
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

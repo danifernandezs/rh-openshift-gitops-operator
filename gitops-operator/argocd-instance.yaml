@@ -1,0 +1,93 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: argocd-gitops-instance
+  namespace: openshift-gitops
+spec:
+  server:
+    autoscale:
+      enabled: true
+    grpc:
+      ingress:
+        enabled: false
+    ingress:
+      enabled: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    route:
+      enabled: true
+    service:
+      type: ''
+  grafana:
+    enabled: false
+  prometheus:
+    enabled: false
+  applicationSet:
+    resources:
+      limits:
+        cpu: '2'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+  rbac:
+    policy: |
+      g, system:cluster-admins, role:admin
+      g, cluster-admins, role:admin
+    scopes: '[groups]'
+  repo:
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  resourceExclusions: |
+    - apiGroups:
+      - tekton.dev
+      clusters:
+      - '*'
+      kinds:
+      - TaskRun
+      - PipelineRun
+  dex:
+    openShiftOAuth: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+  ha:
+    enabled: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+  redis:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+  controller:
+    resources:
+      limits:
+        cpu: '2'
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi

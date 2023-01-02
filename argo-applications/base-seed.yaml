@@ -1,0 +1,19 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: base-seed
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  project: base-seed
+  source:
+    repoURL: https://github.com/danifernandezs/rh-openshift-gitops-demo.git
+    targetRevision: main
+    path: argo-applications/base-seed/
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
