@@ -93,7 +93,7 @@ fi
 
 while [[ $( oc get pods -l app.kubernetes.io/name=openshift-gitops-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting to a Ready Default ArgoCD instance. No action required, just wait."
+  echo "We are waiting for a Ready Default ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
@@ -114,7 +114,7 @@ oc create -f gitops-operator/argocd-instance.yaml -n openshift-gitops
 
 while [[ $( oc get pods -l app.kubernetes.io/name=argocd-gitops-instance-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting to a Ready Default ArgoCD instance. No action required, just wait."
+  echo "We are waiting for a new ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
