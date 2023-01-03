@@ -61,7 +61,7 @@ then
       --type merge \
       --patch '{"metadata":{"labels":{"patched-timestamp":"'$(date +"%Y-%m-%d_%H-%M")'"}}}'
 else
-  echo "The InstallPlan is not approved."
+  echo "The InstallPlan has been approved."
   echo ""
   echo "Time to check if the operator is at Ready status"
 
@@ -70,7 +70,7 @@ fi
 # Checking the complete status at the install plan
 if [[ $(oc get installplan.operators.coreos.com $REF_INSTALLPLAN -n $SUBS_NAMESPACE -o 'jsonpath={..status.phase}') != "Complete" ]]
 then
-  echo "The InstallPlan it's not at completed status"
+  echo "The InstallPlan is not at completed status."
   echo "---   ---   ---   ---   ---   ---"
   sleep 1
   while true; do
@@ -86,7 +86,7 @@ then
     fi
   done
 else
-  echo "The InstallPlan it's already at a completed status"
+  echo "The InstallPlan is already at a completed status"
   echo ""
   echo ""
 fi
@@ -114,7 +114,7 @@ oc create -f gitops-operator/argocd-instance.yaml -n openshift-gitops
 
 while [[ $( oc get pods -l app.kubernetes.io/name=argocd-gitops-instance-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting to a Ready new one ArgoCD instance"
+  echo "We are waiting to a Ready Default ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
@@ -128,7 +128,7 @@ oc create -f appprojects/ -n openshift-gitops
 # Deploy the initial ArgoCD Applications, as seed of GitOps
 # App of Apps of ApplicationSets
 echo ""
-echo "Deploy the initial ArgoCD Applications, as seed of GitOps"
+echo "Deploy the initial ArgoCD Applications as seed of GitOps"
 sleep 1
 oc create -f argo-applications/ -n openshift-gitops
 
