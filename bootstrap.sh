@@ -113,7 +113,7 @@ fi
 
 while [[ $( oc get pods -l app.kubernetes.io/name=openshift-gitops-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting for a Ready Default ArgoCD instance. No action required, just wait."
+  echo "Waiting for a Ready default ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
