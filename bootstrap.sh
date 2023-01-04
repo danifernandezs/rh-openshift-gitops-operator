@@ -22,12 +22,21 @@ fi
 
 echo "yq version $YQ_VERSION is sufficient for use."
 
-
 # Check if oc is installed
 if ! command -v oc > /dev/null; then
-    echo "Error: oc is not installed. Please install oc through https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html and try again."
+    echo "Error: oc is not installed. Please install oc through https://docs.openshift.com/container-platform/4.11/cli_reference/openshift_cli/getting-started-cli.html and try again."
     exit 1
 fi
+
+# Check if oc version is greater than or equal to 4
+OC_VERSION=$(oc version | grep 'Client Version:' | cut -d' ' -f3)
+if [[ "$OC_VERSION" < "4" ]]
+then
+    echo "Your version of oc ($OC_VERSION) is too old. Please upgrade to a version that is greater than or equal to 4."
+    exit 1
+fi
+
+echo "oc version $OC_VERSION is sufficient for use."
 
 # Check connectivity with the OpenShift cluster
 if ! oc get pods > /dev/null 2>&1; then
