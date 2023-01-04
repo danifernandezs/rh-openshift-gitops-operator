@@ -12,6 +12,17 @@ if ! command -v yq > /dev/null; then
     exit 1
 fi
 
+# Check if yq version is greater than or equal to 4
+YQ_VERSION=$(yq --version | cut -d' ' -f4 | cut -d'v' -f2)
+if [[ "$YQ_VERSION" < "4" ]]
+then
+    echo "Your version of yq ($YQ_VERSION) is too old. Please upgrade to a version that is greater than or equal to 4."
+    exit 1
+fi
+
+echo "yq version $YQ_VERSION is sufficient for use."
+
+
 # Check if oc is installed
 if ! command -v oc > /dev/null; then
     echo "Error: oc is not installed. Please install oc through https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html and try again."
