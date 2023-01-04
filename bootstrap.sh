@@ -8,13 +8,13 @@ set -o pipefail # return the exit code of the last command that threw a non-zero
 
 # Check if yq is installed
 if ! command -v yq > /dev/null; then
-    echo "Error: yq is not installed. Please install yq and try again."
+    echo "Error: yq is not installed. Please install yq through https://github.com/mikefarah/yq/#install and try again."
     exit 1
 fi
 
 # Check if oc is installed
 if ! command -v oc > /dev/null; then
-    echo "Error: oc is not installed. Please install oc and try again."
+    echo "Error: oc is not installed. Please install oc through https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html and try again."
     exit 1
 fi
 
@@ -29,11 +29,11 @@ echo "Successfully connected to the OpenShift cluster, continuing ..."
 echo ""
 
 # Obtaining the desired subscription name
-export SUBS_NAME=$(yq r gitops-operator/subscription.yaml metadata.name)
+export SUBS_NAME=$(yq '.metadata.name' gitops-operator/subscription.yaml)
 # echo "$SUBS_NAME"
 
 # Obtaining the namespace where the resource it's applied
-export SUBS_NAMESPACE=$(yq r gitops-operator/subscription.yaml metadata.namespace)
+export SUBS_NAMESPACE=$(yq '.metadata.namespace' gitops-operator/subscription.yaml)
 # echo "$SUBS_NAMESPACE"
 
 # Applying the subscription resource
@@ -48,7 +48,7 @@ export REF_INSTALLPLAN=$(oc get subscription.operators.coreos.com $SUBS_NAME -n 
 if [[ $(oc get installplan.operators.coreos.com $REF_INSTALLPLAN -n $SUBS_NAMESPACE -o 'jsonpath={..spec.approved}') == "false" ]]
 then
   sleep 1
-  echo "The InstallPlan it's not approved"
+  echo "The InstallPlan is not approved."
   echo "---   ---   ---   ---   ---   ---"
 
   oc patch installplan $REF_INSTALLPLAN \
@@ -61,7 +61,7 @@ then
       --type merge \
       --patch '{"metadata":{"labels":{"patched-timestamp":"'$(date +"%Y-%m-%d_%H-%M")'"}}}'
 else
-  echo "The InstallPlan it's approved"
+  echo "The InstallPlan has been approved."
   echo ""
   echo "Time to check if the operator is at Ready status"
 
@@ -70,7 +70,7 @@ fi
 # Checking the complete status at the install plan
 if [[ $(oc get installplan.operators.coreos.com $REF_INSTALLPLAN -n $SUBS_NAMESPACE -o 'jsonpath={..status.phase}') != "Complete" ]]
 then
-  echo "The InstallPlan it's not at completed status"
+  echo "The InstallPlan is not at completed status."
   echo "---   ---   ---   ---   ---   ---"
   sleep 1
   while true; do
@@ -86,14 +86,14 @@ then
     fi
   done
 else
-  echo "The InstallPlan it's already at a completed status"
+  echo "The InstallPlan is already at a completed status"
   echo ""
   echo ""
 fi
 
 while [[ $( oc get pods -l app.kubernetes.io/name=openshift-gitops-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting to a Ready Default ArgoCD instance"
+  echo "We are waiting for a Ready Default ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
@@ -114,7 +114,7 @@ oc create -f gitops-operator/argocd-instance.yaml -n openshift-gitops
 
 while [[ $( oc get pods -l app.kubernetes.io/name=argocd-gitops-instance-server -n openshift-gitops -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
   sleep 1
-  echo "We are waiting to a Ready new one ArgoCD instance"
+  echo "We are waiting for a new ArgoCD instance. No action required, just wait."
   echo "..."
   sleep 5
 done
@@ -128,7 +128,7 @@ oc create -f appprojects/ -n openshift-gitops
 # Deploy the initial ArgoCD Applications, as seed of GitOps
 # App of Apps of ApplicationSets
 echo ""
-echo "Deploy the initial ArgoCD Applications, as seed of GitOps"
+echo "Deploy the initial ArgoCD Applications as seed of GitOps"
 sleep 1
 oc create -f argo-applications/ -n openshift-gitops
 
